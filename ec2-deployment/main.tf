@@ -191,7 +191,7 @@ resource "aws_instance" "web" {
   ami                         = "ami-0360c520857e3138f" # Ubuntu 24.04 LTS (ap-south-1)
   instance_type               = var.instance_type  
   subnet_id                   = aws_subnet.my-subnet.id
-  key_name                    = var.key_name
+  key_name                    = aws_key_pair.deployer.key_name
   vpc_security_group_ids      = [aws_security_group.allow_ssh_http.id]
   iam_instance_profile        = aws_iam_instance_profile.ec2_profile.name
   associate_public_ip_address = true
