@@ -93,7 +93,7 @@ resource "aws_security_group" "allow_ssh_http" {
 ###IAM Role + Policy + Instance Profile##
 
 resource "aws_iam_role" "ec2_role" {
-  name = "${var.Project_name}-ec2-role"
+  name = "${var.Project_name}-ec2-role1"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -110,7 +110,7 @@ resource "aws_iam_role" "ec2_role" {
 }
 
 resource "aws_iam_policy" "ec2_policy" {
-  name        = "${var.Project_name}-policy"
+  name        = "${var.Project_name}-policy11"
   description = "Policy for EC2 to access S3 and Secrets Manager"
 
   policy = jsonencode({
@@ -134,7 +134,7 @@ resource "aws_iam_role_policy_attachment" "role_attach" {
 }
 
 resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "${var.Project_name}-instance-profile"
+  name = "${var.Project_name}-instance-profile1"
   role = aws_iam_role.ec2_role.name
 }
 
