@@ -90,3 +90,60 @@ resource "aws_security_group" "allow_ssh_http" {
     Name = "allow-ssh-http"
   }
 }
+###IAM Role + Policy + Instance Profile##
+
+resource "aws_iam_role" "ec2_role" {
+  name = "${var.Project_name}-ec2-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "ec2_policy" {
+  name        = "${var.Project_name}-policy"
+  description = "Policy for EC2 to access S3 and Secrets Manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:*",
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "role_attach" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.ec2_policy.arn
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "${var.Project_name}-instance-profile"
+  role = aws_iam_role.ec2_role.name
+}
+
+##s3 bucket#
+resource "aws_s3_bucket" "my-bucket" {
+  bucket = var.s3_bucket_name
+  force_destroy = true
+
+  tags = {
+    Name = "${var.Project_name}-bucket"
+  }
+}
