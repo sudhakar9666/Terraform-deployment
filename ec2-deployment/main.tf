@@ -171,3 +171,39 @@ resource "aws_s3_bucket" "my-bucket" {
     Name = "${var.Project_name}-bucket"
   }
 }
+# AWS Secrets Manager (Key Vault)
+###################################
+resource "aws_secretsmanager_secret" "app_secret" {
+  name        = var.secret_name
+  description = "Application credentials stored securely"
+}
+
+resource "aws_secretsmanager_secret_version" "app_secret_value" {
+  secret_id     = aws_secretsmanager_secret.app_secret.id
+  secret_string = jsonencode({
+    username = "admin"
+    password = "SuperSecret123!"
+  })
+}
+# EC2 Instance
+###################################
+resource "aws_instance" "web" {
+  ami                         = "ami-0360c520857e3138f" # Ubuntu 24.04 LTS (ap-south-1)
+  instance_type               = var.instance_type  
+  subnet_id                   = aws_subnet.my-subnet.id
+  key_name                    = var.key_name
+  vpc_security_group_ids      = [aws_security_group.allow_ssh_http.id]
+  iam_instance_profile        = aws_iam_instance_profile.ec2_profile.name
+  associate_public_ip_address = true
+
+  user_data = <<-EOF
+    #!/bin/bash
+    apt update -y
+    apt install -y awscli nginx
+    echo "<h1>Welcome to Terraform EC2</h1>" > /var/www/html/index.html
+  EOF
+
+  tags = {
+    Name = "${var.Project_name}-ec2"
+  }
+}
