@@ -17,4 +17,5 @@ resource "aws_subnet" "my-subnet" {
     Name = "${var.Project_name}-public-subnet"
   }
 }
+
 ##############################
