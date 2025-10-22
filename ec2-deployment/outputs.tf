@@ -10,7 +10,7 @@ output "ec2_public_ip" {
   value = aws_instance.web.public_ip
 }
 
-output "ec2_ssh_command" {
+/*output "ec2_ssh_command" {
   value = "ssh -i ~/.ssh/${var.key_name}.pem ubuntu@${aws_instance.web.public_ip}"
 }
 
@@ -20,4 +20,4 @@ output "s3_bucket_name" {
 
 output "secret_arn" {
   value = aws_secretsmanager_secret.app_secret.arn
-}
+}*/
