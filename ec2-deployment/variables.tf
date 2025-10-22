@@ -28,7 +28,7 @@ variable "s3_bucket_name" {
 }
 
 variable "secret_name" {
-  default = "my-app-secret"
+  default = "my-app-secret1"
 }
 
 ###################################
