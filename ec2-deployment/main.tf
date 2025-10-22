@@ -18,6 +18,30 @@ resource "aws_subnet" "my-subnet" {
   }
 }
 
+# Generate SSH key + AWS Key Pair
+##############################
+resource "tls_private_key" "ec2_key" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "${var.Project_name}-ec2-key"
+  public_key = tls_private_key.ec2_key.public_key_openssh
+}
+
+##############################
+# Upload PEM to S3 (depends on bucket)
+##############################
+resource "aws_s3_bucket_object" "ec2_pem" {
+  bucket                 = aws_s3_bucket.my-bucket.id
+  key                    = "keys/${var.Project_name}-ec2-key.pem"
+  content                = tls_private_key.ec2_key.private_key_pem
+  server_side_encryption = "AES256"
+
+  depends_on = [aws_s3_bucket.my-bucket]
+}
+
 resource "aws_subnet" "my-subnet-2" {
   vpc_id            = aws_vpc.myvpc.id
   cidr_block        = var.private_subnet_cidr
