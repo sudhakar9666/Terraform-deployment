@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'ec2-deployment/**'
+      - '.github/workflows/ec2-deploy.yml'
   workflow_dispatch:
 
 jobs:
